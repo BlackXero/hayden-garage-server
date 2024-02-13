@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('booking', function (Blueprint $table) {
+        Schema::create('slots', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('customer_id')->unsigned();
-            $table->bigInteger('make_id')->unsigned();
-            $table->bigInteger('model_id')->unsigned();
-            $table->bigInteger('slot_id');
+            $table->date('slot_date');
+            $table->time('slot_time');
+            $table->boolean('is_booked')->default(0);
+            $table->boolean('disabled')->default(0);
+            $table->bigInteger('booked_by')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('booking');
+        Schema::dropIfExists('slots');
     }
 };
