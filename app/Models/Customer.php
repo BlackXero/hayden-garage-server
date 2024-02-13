@@ -13,7 +13,8 @@ class Customer extends Model
     protected $fillable = array(
         'first_name',
         'last_name',
-        'phone'
+        'phone',
+        'email'
     );
 
     protected $appends = array(

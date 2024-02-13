@@ -20,9 +20,7 @@ use App\Http\Controllers\VehicleController;
 
 
 Route::post('login',[AuthController::class,'login']);
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+
 Route::group(['middleware' => 'auth:sanctum'],static function(){
     Route::post('/get-bookings',[BookingController::class,'getBookings']);
     Route::post('/create-slots',[BookingController::class,'createSlots']);

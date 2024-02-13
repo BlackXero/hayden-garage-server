@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\BookingConfirmationAdmin;
+use App\Mail\BookingConfirmationCustomer;
 use App\Models\Booking;
 use App\Models\Customer;
 use App\Models\Slots;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class BookingController extends Controller
 {
@@ -108,6 +111,7 @@ class BookingController extends Controller
         $firstName = trim($request->get('first_name'));
         $lastName = trim($request->get('last_name'));
         $phone = trim($request->get('phone'));
+        $email = trim($request->get('email'));
         $makeId = trim($request->get('make_id'));
         $modelId = trim($request->get('model_id'));
         $slotId = trim($request->get('slot_id'));
@@ -117,6 +121,7 @@ class BookingController extends Controller
             'first_name' => $firstName,
             'last_name' => $lastName,
             'phone' => $phone,
+            'email' => $email,
         ]);
         $customer->save();
         $customerId = $customer->id;
@@ -134,6 +139,12 @@ class BookingController extends Controller
         $slot->is_booked = 1;
         $slot->booked_by = $customerId;
         $slot->save();
+
+        $refreshedBooking = $booking->refresh();
+        $refreshedCustomer = $customer->refresh();
+        //Send email to customer and admin
+        Mail::to('paul@admin.com')->send(new BookingConfirmationAdmin($refreshedBooking,$refreshedCustomer));
+        Mail::to($customer->email)->send(new BookingConfirmationCustomer($refreshedBooking,$refreshedCustomer));
         return response()->json(['success' => true, 'message' => 'Booking saved successfully.','data' => []]);
     }
 }

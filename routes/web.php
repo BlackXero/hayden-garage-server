@@ -14,5 +14,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    $booking = \App\Models\Booking::with('slot')->first();
+    $customer = \App\Models\Customer::first();
+    //dd($booking,$customer);
+    \Illuminate\Support\Facades\Mail::to('ankeshhimesh@gmail.com')->send(new \App\Mail\BookingConfirmationAdmin($booking,$customer));
 });
+
